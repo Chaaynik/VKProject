@@ -14,24 +14,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.vkproject.ui.theme.VKProjectTheme
-
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             VKProjectTheme {
-                AppListScreen()
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "list") {
+                    composable("list") {
+                        AppListScreen(navController = navController)
+                    }
+                    composable("detail/{appId}") { backStackEntry ->
+                        val appId = backStackEntry.arguments?.getString("appId")?.toIntOrNull()
+                        AppDetailScreen(navController = navController, appId = appId)
+                    }
+                }
             }
         }
     }
 }
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppListScreen() {
+fun AppListScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,11 +69,12 @@ fun AppListScreen() {
                 .padding(innerPadding)
         ) {
             AppCard(
-                id=1,
+                id = 1,
                 icon = Icons.Default.Message,
                 name = "VK Мессенджер",
                 description = "Общение и звонки",
-                category = "Общение"
+                category = "Общение",
+                onClick = { navController.navigate("detail/1") }
             )
             HorizontalDivider()
 
@@ -71,7 +83,9 @@ fun AppListScreen() {
                 icon = Icons.Default.PlayArrow,
                 name = "VK Видео",
                 description = "Фильмы, сериалы и ролики",
-                category = "Видео"
+                category = "Видео",
+                onClick = { navController.navigate("detail/2") }
+
             )
             HorizontalDivider()
 
@@ -80,7 +94,9 @@ fun AppListScreen() {
                 icon = Icons.Default.Headphones,
                 name = "VK Музыка",
                 description = "Музыка и подкасты",
-                category = "Музыка"
+                category = "Музыка",
+                onClick = { navController.navigate("detail/3") }
+
             )
             HorizontalDivider()
 
@@ -89,7 +105,9 @@ fun AppListScreen() {
                 icon = Icons.Default.PeopleAlt,
                 name = "VK Знакомства",
                 description = "Дейтинг-сервис",
-                category = "Знакомства"
+                category = "Знакомства",
+                onClick = { navController.navigate("detail/4") }
+
             )
             HorizontalDivider()
 
@@ -98,7 +116,9 @@ fun AppListScreen() {
                 icon = Icons.Default.Add,
                 name = "Другое...",
                 description = "Другие сервисы",
-                category = "Разное"
+                category = "Разное",
+                onClick = { navController.navigate("detail/5") }
+
             )
             HorizontalDivider()
         }
